@@ -6,7 +6,6 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "postinstall": "npm rebuild --platform=linux --arch=x64 --target=18 @next/swc",
     "lint": "next lint"
   },
   "dependencies": {
@@ -24,7 +23,6 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@next/swc-win32-x64-msvc": "^15.1.8",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
