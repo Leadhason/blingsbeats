@@ -9,6 +9,8 @@ import { Slider } from "@/components/ui/slider"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
 import { getAllBeats, type Beat } from "@/lib/beats-data"
+import CartSheet from "@/components/CartSheet"
+import FavoritesSheet from "@/components/FavSheet"
 
 const BEATS_PER_PAGE = 6
 
@@ -24,6 +26,8 @@ export default function BeatStore() {
   const [selectedGenre, setSelectedGenre] = useState("all")
   const [cart, setCart] = useState<string[]>([])
   const [favorites, setFavorites] = useState<string[]>([])
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
 
   // Calculate pagination
@@ -31,6 +35,20 @@ export default function BeatStore() {
   const startIndex = (currentPage - 1) * BEATS_PER_PAGE
   const endIndex = startIndex + BEATS_PER_PAGE
   const currentBeats = filteredBeats.slice(startIndex, endIndex)
+
+  // Load cart and favorites from localStorage
+  useEffect(() => {
+    const savedCart = localStorage.getItem("cart")
+    if (savedCart) {
+      const cartData = JSON.parse(savedCart)
+      setCart(cartData.map((item: any) => item.beatId))
+    }
+
+    const savedFavorites = localStorage.getItem("favorites")
+    if (savedFavorites) {
+      setFavorites(JSON.parse(savedFavorites))
+    }
+  }, [])
 
   // Audio player effects
   useEffect(() => {
@@ -96,17 +114,31 @@ export default function BeatStore() {
   }
 
   const addToCart = (beatId: string) => {
-    if (!cart.includes(beatId)) {
+    const savedCart = localStorage.getItem("cart")
+    const cartItems = savedCart ? JSON.parse(savedCart) : []
+
+    // Check if item already exists
+    const existingItem = cartItems.find((item: any) => item.beatId === beatId)
+    if (!existingItem) {
+      cartItems.push({
+        beatId,
+        quantity: 1,
+        licenseType: "basic",
+      })
+      localStorage.setItem("cart", JSON.stringify(cartItems))
       setCart([...cart, beatId])
     }
   }
 
   const toggleFavorite = (beatId: string) => {
+    let updatedFavorites
     if (favorites.includes(beatId)) {
-      setFavorites(favorites.filter((id) => id !== beatId))
+      updatedFavorites = favorites.filter((id) => id !== beatId)
     } else {
-      setFavorites([...favorites, beatId])
+      updatedFavorites = [...favorites, beatId]
     }
+    setFavorites(updatedFavorites)
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites))
   }
 
   const formatTime = (time: number) => {
@@ -140,13 +172,23 @@ export default function BeatStore() {
                 <a href="/store" className="text-orange-500">
                   Store
                 </a>
+                <a href="/about" className="text-gray-300 hover:text-orange-500 transition-colors">
+                  About
+                </a>
+                <a href="/contact" className="text-gray-300 hover:text-orange-500 transition-colors">
+                  Contact
+                </a>
                 <a href="#" className="text-gray-300 hover:text-orange-500 transition-colors">
                   Licenses
                 </a>
               </nav>
             </div>
             <div className="flex items-center gap-4">
-              <Button variant="outline" className="relative border-gray-600 text-black hover:border-orange-500">
+              <Button
+                variant="outline"
+                className="relative border-gray-600 text-black hover:border-orange-500"
+                onClick={() => setIsFavoritesOpen(true)}
+              >
                 <Heart className="w-4 h-4 mr-2" />
                 Favorites
                 {favorites.length > 0 && (
@@ -155,7 +197,7 @@ export default function BeatStore() {
                   </Badge>
                 )}
               </Button>
-              <Button className="relative bg-orange-500 hover:bg-orange-600">
+              <Button className="relative bg-orange-500 hover:bg-orange-600" onClick={() => setIsCartOpen(true)}>
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 Cart
                 {cart.length > 0 && (
@@ -384,6 +426,10 @@ export default function BeatStore() {
           <audio ref={audioRef} src={currentBeatData?.audioUrl} />
         </div>
       )}
+
+      {/* Cart and Favorites Sheets */}
+      <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <FavoritesSheet isOpen={isFavoritesOpen} onClose={() => setIsFavoritesOpen(false)} />
     </div>
   )
 }
