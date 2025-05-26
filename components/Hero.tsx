@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Menu, X } from "lucide-react"
 import Image from "next/image"
+//import { Badge } from "@/components/ui/badge"
 
 export default function Hero() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -11,7 +12,7 @@ export default function Hero() {
     <section className="relative min-h-screen bg-black text-white overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <Image src="/Hero-3.jpeg" alt="Hero Background" fill className="object-cover grayscale" priority />
+        <Image src="/Hero-5.jpeg" alt="Hero Background" fill className="object-cover grayscale" priority />
         <div className="absolute inset-0 bg-black/20" />
       </div>
 
@@ -99,10 +100,11 @@ export default function Hero() {
       {/* Hero Content */}
       <div className="relative z-10 flex items-center justify-center min-h-[80vh] px-6">
         <div className="text-center">
+        {/*<Badge className="bg-orange-500/20 text-orange-500 border-orange-500/30 mb-3">WELCOME!</Badge>*/}
           <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-wider mb-8">
-            <span className="text-white">TH</span>
-            <span className="text-orange-500">3</span>
-            <span className="text-white">RDSTREAM</span>
+            <span className="text-white">Blings</span>
+            <span className="text-orange-500">B</span>
+            <span className="text-white">eats</span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto">
             Innovative music production that bends genres and creates truly eclectic sounds

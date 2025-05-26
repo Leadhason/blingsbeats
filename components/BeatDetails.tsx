@@ -7,130 +7,13 @@ import { Badge } from "@/components/ui/badge"
 import { Slider } from "@/components/ui/slider"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
-
-interface Beat {
-  id: string
-  title: string
-  artist: string
-  genre: string
-  bpm: number
-  key: string
-  price: number
-  image: string
-  audioUrl: string
-  duration: number
-  tags: string[]
-  isExclusive: boolean
-  description?: string
-  releaseDate?: string
-}
-
-// This would normally come from your API/database
-const sampleBeats: Beat[] = [
-  {
-    id: "1",
-    title: "Midnight Vibes",
-    artist: "Th3rdstream",
-    genre: "Hip Hop",
-    bpm: 140,
-    key: "C Minor",
-    price: 29.99,
-    image: "/Cover-images/image-4.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 180,
-    tags: ["Dark", "Trap", "Melodic"],
-    isExclusive: false,
-    description:
-      "A dark and atmospheric trap beat with melodic elements perfect for late-night sessions. This track features haunting melodies layered over hard-hitting 808s and crisp hi-hats. The composition builds tension throughout, making it ideal for introspective rap verses or moody vocal performances.",
-    releaseDate: "2024-01-15",
-  },
-  {
-    id: "2",
-    title: "Neon Dreams",
-    artist: "Th3rdstream",
-    genre: "Electronic",
-    bpm: 128,
-    key: "F Major",
-    price: 39.99,
-    image: "/Cover-images/image-5.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 210,
-    tags: ["Synth", "Ambient", "Chill"],
-    isExclusive: true,
-    description: "Ethereal electronic soundscape with lush synths and ambient textures.",
-    releaseDate: "2024-01-20",
-  },
-  {
-    id: "3",
-    title: "Street Symphony",
-    artist: "Th3rdstream",
-    genre: "Hip Hop",
-    bpm: 85,
-    key: "G Minor",
-    price: 24.99,
-    image: "/Cover-images/image-6.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 195,
-    tags: ["Boom Bap", "Classic", "Vinyl"],
-    isExclusive: false,
-    description: "Classic boom bap beat with vinyl crackle and old-school hip hop vibes.",
-    releaseDate: "2024-01-10",
-  },
-  {
-    id: "4",
-    title: "Future Bass Drop",
-    artist: "Th3rdstream",
-    genre: "EDM",
-    bpm: 150,
-    key: "D Major",
-    price: 34.99,
-    image: "/Cover-images/image-7.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 220,
-    tags: ["Future Bass", "Drop", "Energy"],
-    isExclusive: false,
-    description: "High-energy future bass track with massive drops and euphoric melodies.",
-    releaseDate: "2024-01-25",
-  },
-  {
-    id: "5",
-    title: "Lo-Fi Study",
-    artist: "Th3rdstream",
-    genre: "Lo-Fi",
-    bpm: 70,
-    key: "A Minor",
-    price: 19.99,
-    image: "/Cover-images/image-8.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 240,
-    tags: ["Chill", "Study", "Relaxing"],
-    isExclusive: false,
-    description: "Relaxing lo-fi beat perfect for studying, working, or chilling out.",
-    releaseDate: "2024-01-05",
-  },
-  {
-    id: "6",
-    title: "Trap Anthem",
-    artist: "Th3rdstream",
-    genre: "Trap",
-    bpm: 145,
-    key: "B Minor",
-    price: 44.99,
-    image: "/Cover-images/image-9.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 200,
-    tags: ["Hard", "808", "Anthem"],
-    isExclusive: true,
-    description: "Hard-hitting trap anthem with thunderous 808s and aggressive energy.",
-    releaseDate: "2024-01-30",
-  },
-]
+import { getBeatById, type Beat } from "@/lib/beats-data"
 
 interface BeatDetailsProps {
   beatId: string
 }
 
-export default function BeatDetails({ beatId }: BeatDetailsProps) {
+export default async function BeatDetails({ beatId }: BeatDetailsProps) {
   const [beat, setBeat] = useState<Beat | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -140,8 +23,8 @@ export default function BeatDetails({ beatId }: BeatDetailsProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
-    // Find the beat by ID (in a real app, this would be an API call)
-    const foundBeat = sampleBeats.find((b) => b.id === beatId)
+    // Get the beat by ID from the centralized data
+    const foundBeat = getBeatById(beatId)
     setBeat(foundBeat || null)
   }, [beatId])
 
@@ -222,14 +105,11 @@ export default function BeatDetails({ beatId }: BeatDetailsProps) {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center gap-4">
             <Link href="/store">
-              <Button variant="outline" className="border-gray-600 text-white hover:border-orange-500">
+              <Button variant="link" className="text-white hover:orange-500">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Store
               </Button>
             </Link>
-            <div className="text-2xl font-bold">
-              <span className="text-white">BB</span>
-            </div>
           </div>
         </div>
       </header>
@@ -345,29 +225,24 @@ export default function BeatDetails({ beatId }: BeatDetailsProps) {
               <div className="flex gap-3">
                 <Button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-lg py-6"
+                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-white text-lg py-4"
                   disabled={isInCart}
                 >
                   <ShoppingCart className="w-5 h-5 mr-2" />
                   {isInCart ? "Added to Cart" : "Add to Cart"}
                 </Button>
-                <Button
-                  onClick={toggleFavorite}
-                  variant="outline"
-                  className="border-gray-600 text-white hover:border-orange-500 py-6"
-                >
-                  <Heart className={`w-5 h-5 ${isFavorite ? "fill-orange-500 text-orange-500" : "text-white"}`} />
-                </Button>
-              </div>
-
-              <div className="flex gap-3">
-                <Button variant="outline" className="flex-1 border-gray-600 text-white hover:border-orange-500">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download Preview
-                </Button>
-                <Button variant="outline" className="border-gray-600 text-white hover:border-orange-500">
-                  <Share2 className="w-4 h-4" />
-                </Button>
+                    <div className="flex gap-3 justify-center">
+                    <Button
+                    onClick={toggleFavorite}
+                    variant="outline"
+                    className="border-gray-600 bg-transparent text-white hover:text-black py-4"
+                    >
+                    <Heart className={`w-5 h-5 ${isFavorite ? "fill-orange-500 text-orange-500" : ""}`} />
+                    </Button>
+                    <Button variant="outline" className="border-gray-600 text-white py-4 bg-transparent">
+                    <Share2 className="w-4 h-4" />
+                    </Button>
+                </div>
               </div>
             </div>
 

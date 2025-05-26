@@ -8,161 +8,13 @@ import { Badge } from "@/components/ui/badge"
 import { Slider } from "@/components/ui/slider"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
-
-interface Beat {
-  id: string
-  title: string
-  artist: string
-  genre: string
-  bpm: number
-  key: string
-  price: number
-  image: string
-  audioUrl: string
-  duration: number
-  tags: string[]
-  isExclusive: boolean
-  description?: string
-  releaseDate?: string
-}
-
-const sampleBeats: Beat[] = [
-  {
-    id: "1",
-    title: "Midnight Vibes",
-    artist: "Th3rdstream",
-    genre: "Hip Hop",
-    bpm: 140,
-    key: "C Minor",
-    price: 29.99,
-    image: "/Cover-images/image-4.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 180,
-    tags: ["Dark", "Trap", "Melodic"],
-    isExclusive: false,
-    description: "A dark and atmospheric trap beat with melodic elements perfect for late-night sessions.",
-    releaseDate: "2024-01-15",
-  },
-  {
-    id: "2",
-    title: "Neon Dreams",
-    artist: "Th3rdstream",
-    genre: "Electronic",
-    bpm: 128,
-    key: "F Major",
-    price: 39.99,
-    image: "/Cover-images/image-5.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 210,
-    tags: ["Synth", "Ambient", "Chill"],
-    isExclusive: true,
-    description: "Ethereal electronic soundscape with lush synths and ambient textures.",
-    releaseDate: "2024-01-20",
-  },
-  {
-    id: "3",
-    title: "Street Symphony",
-    artist: "Th3rdstream",
-    genre: "Hip Hop",
-    bpm: 85,
-    key: "G Minor",
-    price: 24.99,
-    image: "/Cover-images/image-6.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 195,
-    tags: ["Boom Bap", "Classic", "Vinyl"],
-    isExclusive: false,
-    description: "Classic boom bap beat with vinyl crackle and old-school hip hop vibes.",
-    releaseDate: "2024-01-10",
-  },
-  {
-    id: "4",
-    title: "Future Bass Drop",
-    artist: "Th3rdstream",
-    genre: "EDM",
-    bpm: 150,
-    key: "D Major",
-    price: 34.99,
-    image: "/Cover-images/image-7.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 220,
-    tags: ["Future Bass", "Drop", "Energy"],
-    isExclusive: false,
-    description: "High-energy future bass track with massive drops and euphoric melodies.",
-    releaseDate: "2024-01-25",
-  },
-  {
-    id: "5",
-    title: "Lo-Fi Study",
-    artist: "Th3rdstream",
-    genre: "Lo-Fi",
-    bpm: 70,
-    key: "A Minor",
-    price: 19.99,
-    image: "/Cover-images/image-8.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 240,
-    tags: ["Chill", "Study", "Relaxing"],
-    isExclusive: false,
-    description: "Relaxing lo-fi beat perfect for studying, working, or chilling out.",
-    releaseDate: "2024-01-05",
-  },
-  {
-    id: "6",
-    title: "Trap Anthem",
-    artist: "Th3rdstream",
-    genre: "Trap",
-    bpm: 145,
-    key: "B Minor",
-    price: 44.99,
-    image: "/Cover-images/image-9.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 200,
-    tags: ["Hard", "808", "Anthem"],
-    isExclusive: true,
-    description: "Hard-hitting trap anthem with thunderous 808s and aggressive energy.",
-    releaseDate: "2024-01-30",
-  },
-  // Additional beats for pagination
-  {
-    id: "7",
-    title: "Cosmic Journey",
-    artist: "Th3rdstream",
-    genre: "Ambient",
-    bpm: 90,
-    key: "E Minor",
-    price: 27.99,
-    image: "/Cover-images/image-1.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 300,
-    tags: ["Space", "Atmospheric", "Cinematic"],
-    isExclusive: false,
-    description: "Expansive ambient track that takes listeners on a cosmic journey through space.",
-    releaseDate: "2024-02-01",
-  },
-  {
-    id: "8",
-    title: "Urban Pulse",
-    artist: "Th3rdstream",
-    genre: "Hip Hop",
-    bpm: 95,
-    key: "F# Minor",
-    price: 32.99,
-    image: "/Cover-images/image-2.jpeg",
-    audioUrl: "/placeholder-audio.mp3",
-    duration: 185,
-    tags: ["Urban", "Modern", "Groove"],
-    isExclusive: false,
-    description: "Modern hip hop beat with urban influences and infectious groove.",
-    releaseDate: "2024-02-05",
-  },
-]
+import { getAllBeats, type Beat } from "@/lib/beats-data"
 
 const BEATS_PER_PAGE = 6
 
 export default function BeatStore() {
-  const [beats, setBeats] = useState(sampleBeats)
-  const [filteredBeats, setFilteredBeats] = useState(sampleBeats)
+  const [beats, setBeats] = useState<Beat[]>(getAllBeats())
+  const [filteredBeats, setFilteredBeats] = useState<Beat[]>(getAllBeats())
   const [currentPage, setCurrentPage] = useState(1)
   const [currentBeat, setCurrentBeat] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -294,7 +146,7 @@ export default function BeatStore() {
               </nav>
             </div>
             <div className="flex items-center gap-4">
-              <Button variant="outline" className="relative border-black text-black hover:border-orange-500">
+              <Button variant="outline" className="relative border-gray-600 text-black hover:border-orange-500">
                 <Heart className="w-4 h-4 mr-2" />
                 Favorites
                 {favorites.length > 0 && (
@@ -416,15 +268,17 @@ export default function BeatStore() {
                     {/* Price and Actions */}
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold text-white">${beat.price}</span>
-                      <Button
-                        onClick={() => addToCart(beat.id)}
-                        size="sm"
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-medium"
-                        disabled={cart.includes(beat.id)}
-                      >
-                        <ShoppingCart className="w-4 h-4 mr-2" />
-                        {cart.includes(beat.id) ? "In Cart" : "Add to Cart"}
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => addToCart(beat.id)}
+                          size="sm"
+                          className="bg-orange-500 hover:bg-orange-600 text-white font-medium"
+                          disabled={cart.includes(beat.id)}
+                        >
+                          <ShoppingCart className="w-4 h-4 mr-2" />
+                          {cart.includes(beat.id) ? "In Cart" : "Add to Cart"}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -446,7 +300,7 @@ export default function BeatStore() {
                 variant="outline"
                 onClick={() => goToPage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="border-black text-black disabled:opacity-50"
+                className="border-gray-600 text-black hover:border-orange-500 disabled:opacity-50"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Previous
@@ -473,7 +327,7 @@ export default function BeatStore() {
                 variant="outline"
                 onClick={() => goToPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="border-gray-600 text-black hover:border-black disabled:opacity-50"
+                className="border-gray-600 text-black hover:border-orange-500 disabled:opacity-50"
               >
                 Next
                 <ChevronRight className="w-4 h-4" />
