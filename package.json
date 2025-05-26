@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-     "postinstall": "rm -rf node_modules/@next/swc-*",
+    "postinstall": "npm rebuild --platform=linux --arch=x64 --target=18 @next/swc",
     "lint": "next lint"
   },
   "dependencies": {
